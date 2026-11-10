@@ -28,18 +28,19 @@ public class OrderService {
             throw new InvalidOrderException();
         }
         for (OrderItem item : items) {
-            if (item == null) {
+            if (item == null) { //장바구니가 텅 빔
                 throw new InvalidOrderException();
             }
-            if (item.unitPrice() < 0) {
+            if (item.unitPrice() < 0) { //가격이 음수
                 throw new InvalidPriceException();
             }
-            if (item.quantity() < 1) {
+            if (item.quantity() < 1) { //물건 0개 구매
                 throw new InvalidQuantityException();
             }
         }
     }
 
+    //물건값 더하기
     private long calculateOrderAmount(List<OrderItem> items) {
         long orderAmount = 0;
         for (OrderItem item : items) {
@@ -48,6 +49,7 @@ public class OrderService {
         return orderAmount;
     }
 
+    //할인 받기
     private void validateDiscount(long orderAmount, long discountAmount) {
         if (discountAmount < 0 || discountAmount > orderAmount) {
             throw new IllegalStateException("할인 정책이 잘못된 할인 금액을 반환했습니다: " + discountAmount);
