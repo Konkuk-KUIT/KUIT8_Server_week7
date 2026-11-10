@@ -13,13 +13,44 @@ public class OrderService {
     }
 
     public OrderResult order(String grade, List<OrderItem> items) {
-        // TODO: null/빈 목록과 null 상품은 InvalidOrderException으로 거절하세요.
-        // TODO: 음수 단가는 InvalidPriceException, 1 미만 수량은 InvalidQuantityException으로 거절하세요.
-        // TODO: 각 상품의 단가 × 수량을 합산해 주문 금액을 long으로 계산하세요.
-        // TODO: 모든 상품 검증이 끝난 다음 policyResolver로 정책을 선택하고 할인 금액을 계산하세요.
-        // TODO: 할인 금액이 음수이거나 주문 금액을 초과하면 IllegalStateException을 발생시키세요.
-        // TODO: 입력을 수정하거나 출력하지 말고 주문/할인/결제 금액을 OrderResult로 반환하세요.
-        // 구현을 마치면 아래 임시 예외를 삭제하세요.
-        throw new UnsupportedOperationException();
+        validateItems(items); // 1. 입력 검증 (전부 끝까지)
+        long orderAmount = calculateOrderAmount(items); // 2. 합계 계산
+
+        DiscountPolicy policy = policyResolver.resolve(grade); // 3. 정책 선택
+        long discountAmount = policy.discount(orderAmount); // 4. 할인 계산
+        validateDiscount(orderAmount, discountAmount); // 5. 할인액 검증
+
+        return new OrderResult(orderAmount, discountAmount, orderAmount - discountAmount);
+    }
+
+    private void validateItems(List<OrderItem> items) {
+        if (items == null || items.isEmpty()) {
+            throw new InvalidOrderException();
+        }
+        for (OrderItem item : items) {
+            if (item == null) {
+                throw new InvalidOrderException();
+            }
+            if (item.unitPrice() < 0) {
+                throw new InvalidPriceException();
+            }
+            if (item.quantity() < 1) {
+                throw new InvalidQuantityException();
+            }
+        }
+    }
+
+    private long calculateOrderAmount(List<OrderItem> items) {
+        long orderAmount = 0;
+        for (OrderItem item : items) {
+            orderAmount += (long) item.unitPrice() * item.quantity();
+        }
+        return orderAmount;
+    }
+
+    private void validateDiscount(long orderAmount, long discountAmount) {
+        if (discountAmount < 0 || discountAmount > orderAmount) {
+            throw new IllegalStateException("할인 정책이 잘못된 할인 금액을 반환했습니다: " + discountAmount);
+        }
     }
 }
