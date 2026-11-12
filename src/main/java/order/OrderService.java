@@ -13,8 +13,22 @@ public class OrderService {
     }
 
     public OrderResult order(String grade, List<OrderItem> items) {
-        // TODO: null/빈 목록과 null 상품은 InvalidOrderException으로 거절하세요.
-        // TODO: 음수 단가는 InvalidPriceException, 1 미만 수량은 InvalidQuantityException으로 거절하세요.
+        if (items == null || items.isEmpty()) {
+            throw new InvalidOrderException();
+        }
+
+        for (OrderItem item : items) {
+            if (item == null) {
+                throw new InvalidOrderException();
+            }
+            if (item.unitPrice() < 0) {
+                throw new InvalidPriceException();
+            }
+            if (item.quantity() < 1) {
+                throw new InvalidQuantityException();
+            }
+        }
+
         // TODO: 각 상품의 단가 × 수량을 합산해 주문 금액을 long으로 계산하세요.
         // TODO: 모든 상품 검증이 끝난 다음 policyResolver로 정책을 선택하고 할인 금액을 계산하세요.
         // TODO: 할인 금액이 음수이거나 주문 금액을 초과하면 IllegalStateException을 발생시키세요.
