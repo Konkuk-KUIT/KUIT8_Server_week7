@@ -32,7 +32,7 @@ public class OrderService {
         DiscountPolicy policy = policyResolver.resolve(grade);
         long discountAmount = policy.discount(orderAmount);
 
-        if(discountAmount < 0 || orderAmount > discountAmount) throw new IllegalStateException();
+        if(discountAmount < 0 || discountAmount > orderAmount) throw new IllegalStateException();
 
         long finalPrice = orderAmount - discountAmount;
 
