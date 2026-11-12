@@ -6,6 +6,6 @@ public class FixedDiscountPolicy implements DiscountPolicy {
     @Override
     public long discount(long orderAmount) {
         // TODO: 소액 주문과 0원 주문에서도 할인액이 주문 금액을 넘지 않게 하세요.
-        return Math.max(orderAmount - FIXED_DISCOUNT_COST, 0);
+        return Math.min(orderAmount, 1000);
     }
 }
