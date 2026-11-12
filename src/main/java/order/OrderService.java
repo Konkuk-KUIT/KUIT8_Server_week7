@@ -24,8 +24,9 @@ public class OrderService {
 
         long orderAmount = items.stream()
                 .map(item -> {
+                    if(item == null) throw new InvalidOrderException();
                     if(item.unitPrice() < 0) throw new InvalidPriceException();
-                    if(item.quantity() < 0) throw new InvalidQuantityException();
+                    if(item.quantity() < 1) throw new InvalidQuantityException();
                     return item.unitPrice()*item.quantity();
                 }).reduce(0,Integer::sum);
 
