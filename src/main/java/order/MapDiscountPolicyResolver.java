@@ -17,8 +17,14 @@ public class MapDiscountPolicyResolver implements DiscountPolicyResolver {
     @Override
     public DiscountPolicy resolve(String grade) {
         // TODO: grade가 null이거나 policies에 없으면 UnknownGradeException(grade)을 발생시키세요.
+
+        if(grade == null || !policies.containsKey(grade)){
+            throw new UnknownGradeException(grade);
+        }
+
         // TODO: policies에서 등급에 맞는 정책을 찾아 반환하세요.
+
+        return policies.get(grade);
         // 구현을 마치면 아래 임시 예외를 삭제하세요.
-        throw new UnsupportedOperationException();
     }
 }
