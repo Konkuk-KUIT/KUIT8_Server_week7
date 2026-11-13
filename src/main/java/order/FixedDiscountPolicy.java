@@ -6,6 +6,8 @@ public class FixedDiscountPolicy implements DiscountPolicy {
     public long discount(long orderAmount) {
         // TODO: 소액 주문과 0원 주문에서도 할인액이 주문 금액을 넘지 않게 하세요.
         // 구현을 마치면 아래 임시 예외를 삭제하세요.
-        throw new UnsupportedOperationException();
+
+        //1000원 이상일 시 1000원을 뺴고 아니면 0원을 리턴하도록 함
+        return orderAmount > 1000 ? 1000 : orderAmount;
     }
 }
