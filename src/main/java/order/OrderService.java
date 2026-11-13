@@ -20,6 +20,29 @@ public class OrderService {
         // TODO: 할인 금액이 음수이거나 주문 금액을 초과하면 IllegalStateException을 발생시키세요.
         // TODO: 입력을 수정하거나 출력하지 말고 주문/할인/결제 금액을 OrderResult로 반환하세요.
         // 구현을 마치면 아래 임시 예외를 삭제하세요.
-        throw new UnsupportedOperationException();
+        if (items == null || items.isEmpty()) {
+            throw new InvalidOrderException();
+        }
+
+        long orderAmount = 0;
+        for (OrderItem item : items) {
+            if (item == null) {
+                throw new InvalidOrderException();
+            }
+            if (item.unitPrice() < 0) {
+                throw new InvalidPriceException();
+            }
+            if (item.quantity() < 1) {
+                throw new InvalidQuantityException();
+            }
+            orderAmount += (long) item.unitPrice() * item.quantity();
+        }
+
+        DiscountPolicy policy = policyResolver.resolve(grade);
+        long discountAmount = policy.discount(orderAmount);
+        if (discountAmount < 0 || discountAmount > orderAmount) {
+            throw new IllegalStateException("할인 금액은 0원 이상이고 주문 금액 이하여야 합니다.");
+        }
+        return new OrderResult(orderAmount, discountAmount, orderAmount - discountAmount);
     }
 }
